@@ -11,6 +11,14 @@
 8 4 4 2
 */ 
 
+
+int ReadInt(string text)
+{
+    Console.WriteLine(text);
+    int result = Convert.ToInt32(Console.ReadLine());
+    return result;
+}
+
 int[,] FillArrayRandom(int rows, int columns, int min, int max)
 {
     int[,] result = new int[rows, columns];
@@ -38,26 +46,54 @@ void PrintArray(int[,] tmpArray)
     }  
 }
 
-int[,] SortInRows(int[,] tmpArray)
-{
-    int[,] result = new int[tmpArray.GetLength(0), tmpArray.GetLength(1)];
-    for (int row = 0; row < tmpArray.GetLength(0); row++)
-    {
-        for (int i = 0; i < tmpArray.GetLength(0); i++)
-        {
-            int tmp = 0;
-            if 
+// свожу задачу к сортировке одномерных массивов, соответсвующих строкам,
+// методом перестановки рабочего элеиента с максимальным (с лекции) 
+// и их возврату в массив
 
+void ArraySorMaxMin(int[] tmpArray)
+{
+    for (int i = 0; i < tmpArray.Length - 1; i++)
+    {
+        int maxPosition = i;
+
+        for (int j = i + 1; j < tmpArray.Length; j++)
+        {
+            if (tmpArray[j] > tmpArray[maxPosition]) maxPosition = j;
+        }
+
+        int temporary = tmpArray[i];
+        tmpArray[i] = tmpArray[maxPosition];
+        tmpArray[maxPosition] = temporary;
+    }
+};
+
+void SortInRows(int[,] tmpArray)
+{
+    int[] oneRowArray = new int[tmpArray.GetLength(1)];
+    for (int i = 0; i < tmpArray.GetLength(0); i++) // для каждой строки...
+    {
+        for (int j = 0; j < tmpArray.GetLength(1); j++) //выгружаем строку в массив
+        {
+            oneRowArray [j] = tmpArray[i, j]; 
+        }
+        ArraySorMaxMin(oneRowArray); // сортируем получившийся массив
+        for (int j = 0; j < tmpArray.GetLength(1); j++)
+        {
+            tmpArray[i, j] = oneRowArray [j] ; //вгружаем обратно
         }
     }
 }
 
 void Main()
 {
-    int[,] unsortedArray = FillArrayRandom(3, 4, 0, 10);
+    int minV = 0;
+    int maxV = 10;
+    int[,] unsortedArray = FillArrayRandom(ReadInt("Введите число строк:"), ReadInt("Введите число столбцов:"), minV, maxV);
     PrintArray(unsortedArray);
     System.Console.WriteLine();
 
+    SortInRows(unsortedArray);
+    PrintArray(unsortedArray);
 }
 
 Main();
