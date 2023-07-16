@@ -48,24 +48,29 @@ int[,] MultiplyMatrices (int[,] tmpMatrix1, int[,] tmpMatrix2)
 {
     int[,] result = new int[tmpMatrix1.GetLength(0), tmpMatrix1.GetLength(0)]; // путем наблюдения за примерами на странице из материалов к уроку пришла к выводу, что результирующая матрица всегда квадратна, длина стороны соответсвует числу строк в первой из перемножаемых матриц. Задаю размеры матрицы исходя из этого предположения.
     
-    //в лоб: по порядку считаем каждый элемент результирующей матрицы
-    result[]
-
+    /*сначала хотела считать в лоб: по порядку считаем каждый элемент результирующей матрицы; но осознала, что будет ужасное кол-во циклов, так что пробую иначе:
+    проходить по каждому элементу первой матрицы, перемножаем его на все нужные элементы второй и прибавляем результаты на нужные места
+    */
+    
+    for (int i = 0; i < tmpMatrix1.GetLength(0); i++) //это индексы строк первой матрицы
+    {
+        for (int j = 0; j < tmpMatrix1.GetLength(1); j++) //и индексы столбцов, получаем элемент первой матрицы
+        {
+            for (int k = 0; k< tmpMatrix2.GetLength(1); k++) // а этот счетчик поможет перебрать все элементы второй матрицы, на которые нужно найденный элемент умножить; его строка задана номером столбца первой матрицы, это будет его столбец
+            {
+                //перемножаем [i.j] первой матрицы на поочередно все [j, k] элементы второй
+                //результат пишем в [i, k] элемент нового массиваб прибавляя к тому, что там уже лежит
+                result[i, k] += tmpMatrix1[i, j]*tmpMatrix2[j, k];
+            }
+        }
+    }
     return result;
-
-    // менее в лоб: проходим по каждому элементу первой матрицы, перемножаем его на все нужные элементы второй и прибавляем результаты на нужные места
 }
-/*
-int MultipleInstance(int[,] arr1, int[,] arr2, int x, int y)
-{
-    return arr1[x, y]*arr2[x, y] + [x, y]
-}
-*/
 
 void Main()
 {
     int minV = 0;
-    int maxV = 10;
+    int maxV = 10; //это будет "не включая 10"
     int[] sizes = ReadSizes("Введите размер первой матрицы через звездочку без пробелов (например, 3*4). Вторая матрица будет сформирована автоматически.");
     Console.WriteLine();
     int[,] matrix1 = FillArrayRandom(sizes[0], sizes[1], minV, maxV);
@@ -74,78 +79,43 @@ void Main()
     PrintArray(matrix1);
     Console.WriteLine();
 
+    PrintArray(matrix2);
+    Console.WriteLine();
+
+    PrintArray(MultiplyMatrices(matrix1, matrix2));
+    Console.WriteLine();
+}
+
+void Check1_tz() // Проверяю на матрицах из ТЗ, ожидаю {{18, 20}, {15, 18}}
+{
+    int[,] matrix1 = {{2, 4}, {3, 2}};
+    int[,] matrix2 = {{3, 4}, {3, 3}};
+
     PrintArray(matrix1);
     Console.WriteLine();
 
-    PrintArray(MultiplyMatrices(matrix1, matrix2);
+    PrintArray(matrix2);
+    Console.WriteLine();
+
+    PrintArray(MultiplyMatrices(matrix1, matrix2));
+    Console.WriteLine();
+}
+
+void Check2_website() // Проверяю на первом примере с сайта, прямоугольные матрицы. Ожидаю {{12, ​14}, {16, 12​}}
+{
+    int[,] matrix1 = {{1, 2, 2}, {3, 1, 1}};
+    int[,] matrix2 = {{4, 2}, {3, 1}, {1, 5}};
+
+    PrintArray(matrix1);
+    Console.WriteLine();
+
+    PrintArray(matrix2);
+    Console.WriteLine();
+
+    PrintArray(MultiplyMatrices(matrix1, matrix2));
     Console.WriteLine();
 }
 
 Main();
-
----
-void PrintDictionary1(int[] tmpArray)
-{
-
-    for (int i = 0; i < tmpArray.GetLength(0); i++)
-    {
-        if (tmpArray[i]>0) Console.WriteLine($"{i} встречается {tmpArray[i]} раз(а)");
-    }
-}
-
-
-/* здесь с кучей прогонов вариант:
-int[,] CreateDictionary(int[,] tmpArray, int tmpArrMin, int tmpArrMax)
-{
-    int [,] result = new int [tmpArrMax-tmpArrMin, 2];
-    int index = 0; //номер строки в массиве, куда будем писать элемент и частотность
-    for (int k = tmpArrMin; k < tmpArrMax; k++) //перебираем все возможные значения
-    {
-        int count = 0;
-        for (int i = 0; i < tmpArray.GetLength(0); i++) //перебираем строки
-        {
-            for (int j = 0; j < tmpArray.GetLength(1); j++) //и столбцы, вместе - элементы
-            {
-                if (tmpArray[i, j]==k) // сравниваем с очереным возможным значением
-                {
-                    count ++;
-                }
-            }
-        }
-        if (count > 0)
-        {
-            result[index, 0] = k;
-            result[index, 1] = count;
-            index++;
-        }
-    }
-    return result;
-}
-*/
-
-int[] CreateDictionary1(int[,] tmpArray, int tmpArrMin, int tmpArrMax)
-{
-    int [] result = new int [tmpArrMax-tmpArrMin];
-    for (int i = 0; i < tmpArray.GetLength(0); i++) //перебираем строки
-    {
-        for (int j = 0; j < tmpArray.GetLength(1); j++) //и столбцы, вместе - элементы
-        {
-            result[tmpArray[i, j]]++;
-        }
-    }
-    return result;
-}
-
-void Main()
-{
-    int minV = 0;
-    int maxV = 10;
-    int[,] myArray = FillArrayRandom(ReadInt("Введите число строк:"), ReadInt("Введите число столбцов:"), minV, maxV);
-    PrintArray(myArray);
-    Console.WriteLine();
-
-    int[] arrDict = CreateDictionary1(myArray, minV, maxV);
-    PrintDictionary1(arrDict);
-}
-
-Main();
+//Check1_tz();
+//Check2_website();
