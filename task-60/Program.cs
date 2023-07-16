@@ -11,125 +11,83 @@
 
 
 
--------
-/*
-Задача 56: Задайте прямоугольный двумерный массив. Напишите программу, которая будет находить строку с наименьшей суммой элементов.
-Например, задан массив:
-1 4 7 2
-5 9 2 3
-8 4 2 4
-5 2 6 7
-Программа считает сумму элементов в каждой строке и выдаёт номер строки с наименьшей суммой элементов: 1 строка
-*/
-
-
-
-int[,] FillArrayRandom(int rows, int columns, int min, int max)
+int[,,] FillArrayRandom(int rows, int columns, int layers, int min, int max)
 {
-    int[,] result = new int[rows, columns];
+    int[,,] result = new int[rows, columns, layers];
+    int tmp = 0;
     Random rnd = new Random();
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < columns; j++)
         {
-            result[i, j] = rnd.Next(min, max);
+            for (int k = 0; k < layers; k++)
+            {
+                tmp = rnd.Next(min, max);
+                while (NotUnique(result, tmp))
+                {
+                    tmp = rnd.Next(min, max);
+                }
+                result[i, j, k] = tmp;
+            }
         }
     }
     return result;
 }
 
-void PrintArray(int[,] tmpArray)
+bool NotUnique(int[,,] tmpArray, int tmpNumber) 
 {
     for (int i = 0; i < tmpArray.GetLength(0); i++)
     {
         for (int j = 0; j < tmpArray.GetLength(1); j++)
         {
-            Console.Write(tmpArray[i, j] + "\t");
+            for (int k = 0; k < tmpArray.GetLength(2); k++)
+            {
+                if (tmpArray[i, j, k] == tmpNumber) return true;
+            }
+        }
+    }
+    return false;
+}
+
+void PrintArray3(int[,,] tmpArray)
+{
+    for (int i = 0; i < tmpArray.GetLength(0); i++)
+    {
+        for (int j = 0; j < tmpArray.GetLength(1); j++)
+        {
+            for (int k = 0; k < tmpArray.GetLength(2); k++)
+            {
+                Console.Write(tmpArray[i, j, k] + "\t");
+            }
+            Console.WriteLine();
         }
         Console.WriteLine();
     }
 }
 
-int ReadInt(string text)
+void PrintIndexes(int[,,] tmpArray)
 {
-    Console.WriteLine(text);
-    int result = Convert.ToInt32(Console.ReadLine());
-    return result;
-}
-
-/*
-void PrintDictionary(int[,] tmpArray)
-{
-
     for (int i = 0; i < tmpArray.GetLength(0); i++)
     {
-        if (tmpArray[i, 1]>0) Console.WriteLine($"{tmpArray[i, 0]} встречается {tmpArray[i, 1]} раз(а)");
-    }
-}
-*/
-
-void PrintDictionary1(int[] tmpArray)
-{
-
-    for (int i = 0; i < tmpArray.GetLength(0); i++)
-    {
-        if (tmpArray[i]>0) Console.WriteLine($"{i} встречается {tmpArray[i]} раз(а)");
-    }
-}
-
-
-/* здесь с кучей прогонов вариант:
-int[,] CreateDictionary(int[,] tmpArray, int tmpArrMin, int tmpArrMax)
-{
-    int [,] result = new int [tmpArrMax-tmpArrMin, 2];
-    int index = 0; //номер строки в массиве, куда будем писать элемент и частотность
-    for (int k = tmpArrMin; k < tmpArrMax; k++) //перебираем все возможные значения
-    {
-        int count = 0;
-        for (int i = 0; i < tmpArray.GetLength(0); i++) //перебираем строки
+        for (int j = 0; j < tmpArray.GetLength(1); j++)
         {
-            for (int j = 0; j < tmpArray.GetLength(1); j++) //и столбцы, вместе - элементы
+            for (int k = 0; k < tmpArray.GetLength(2); k++)
             {
-                if (tmpArray[i, j]==k) // сравниваем с очереным возможным значением
-                {
-                    count ++;
-                }
+                Console.Write($"{tmpArray[i, j, k]} ({i}, {j}, {k}) \t");
             }
+            Console.WriteLine();
         }
-        if (count > 0)
-        {
-            result[index, 0] = k;
-            result[index, 1] = count;
-            index++;
-        }
+        Console.WriteLine();
     }
-    return result;
-}
-*/
-
-int[] CreateDictionary1(int[,] tmpArray, int tmpArrMin, int tmpArrMax)
-{
-    int [] result = new int [tmpArrMax-tmpArrMin];
-    for (int i = 0; i < tmpArray.GetLength(0); i++) //перебираем строки
-    {
-        for (int j = 0; j < tmpArray.GetLength(1); j++) //и столбцы, вместе - элементы
-        {
-            result[tmpArray[i, j]]++;
-        }
-    }
-    return result;
 }
 
 void Main()
 {
-    int minV = 0;
-    int maxV = 10;
-    int[,] myArray = FillArrayRandom(ReadInt("Введите число строк:"), ReadInt("Введите число столбцов:"), minV, maxV);
-    PrintArray(myArray);
+    int[,,] myArray = FillArrayRandom(2, 3, 4, 10, 100);
+    PrintArray3(myArray);
     Console.WriteLine();
-
-    int[] arrDict = CreateDictionary1(myArray, minV, maxV);
-    PrintDictionary1(arrDict);
+    PrintIndexes(myArray);
+    Console.WriteLine();
 }
 
 Main();

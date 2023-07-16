@@ -1,4 +1,7 @@
-﻿/*
+﻿// Эта задача мне не далась.
+
+
+/*
 Задача 62. Напишите программу, которая заполнит спирально массив 4 на 4.
 Например, на выходе получается вот такой массив:
 01 02 03 04
@@ -8,27 +11,6 @@
 
 !!! в идеале - матрицы редактируемого размера, в т. ч. несимметричные
 */
-
-
-
-
-
-----
-
-
-int[,] FillArrayRandom(int rows, int columns, int min, int max)
-{
-    int[,] result = new int[rows, columns];
-    Random rnd = new Random();
-    for (int i = 0; i < rows; i++)
-    {
-        for (int j = 0; j < columns; j++)
-        {
-            result[i, j] = rnd.Next(min, max);
-        }
-    }
-    return result;
-}
 
 void PrintArray(int[,] tmpArray)
 {
@@ -42,86 +24,57 @@ void PrintArray(int[,] tmpArray)
     }
 }
 
-int ReadInt(string text)
+void Spiral(int[,] tmpArray)
 {
-    Console.WriteLine(text);
-    int result = Convert.ToInt32(Console.ReadLine());
-    return result;
-}
+    int count = 1;
+    int maxI = tmpArray.GetLength(0);
+    int maxJ = tmpArray.GetLength(1);
+    int minI = 0;
+    int minJ = 0;
 
-/*
-void PrintDictionary(int[,] tmpArray)
-{
-
-    for (int i = 0; i < tmpArray.GetLength(0); i++)
+    while (count < 15)
     {
-        if (tmpArray[i, 1]>0) Console.WriteLine($"{tmpArray[i, 0]} встречается {tmpArray[i, 1]} раз(а)");
-    }
-}
-*/
-
-void PrintDictionary1(int[] tmpArray)
-{
-
-    for (int i = 0; i < tmpArray.GetLength(0); i++)
-    {
-        if (tmpArray[i]>0) Console.WriteLine($"{i} встречается {tmpArray[i]} раз(а)");
-    }
-}
-
-
-/* здесь с кучей прогонов вариант:
-int[,] CreateDictionary(int[,] tmpArray, int tmpArrMin, int tmpArrMax)
-{
-    int [,] result = new int [tmpArrMax-tmpArrMin, 2];
-    int index = 0; //номер строки в массиве, куда будем писать элемент и частотность
-    for (int k = tmpArrMin; k < tmpArrMax; k++) //перебираем все возможные значения
-    {
-        int count = 0;
-        for (int i = 0; i < tmpArray.GetLength(0); i++) //перебираем строки
+        maxJ = maxJ - 1;
+        for (int i = minI; i <= maxI; i++)
         {
-            for (int j = 0; j < tmpArray.GetLength(1); j++) //и столбцы, вместе - элементы
-            {
-                if (tmpArray[i, j]==k) // сравниваем с очереным возможным значением
-                {
-                    count ++;
-                }
-            }
+            tmpArray[i, minJ] = count;
+            count++;
         }
-        if (count > 0)
+        
+        for (int j = 1; j <= maxJ; j++)
         {
-            result[index, 0] = k;
-            result[index, 1] = count;
-            index++;
+            tmpArray[maxI, j] = count;
+            count++;
         }
-    }
-    return result;
-}
-*/
+        maxI = maxI - 1;
 
-int[] CreateDictionary1(int[,] tmpArray, int tmpArrMin, int tmpArrMax)
-{
-    int [] result = new int [tmpArrMax-tmpArrMin];
-    for (int i = 0; i < tmpArray.GetLength(0); i++) //перебираем строки
-    {
-        for (int j = 0; j < tmpArray.GetLength(1); j++) //и столбцы, вместе - элементы
+        for (int i = maxI; i >= minI; i--)
         {
-            result[tmpArray[i, j]]++;
+            tmpArray[i, maxJ] = count;
+            count++;
         }
+        minJ = minJ +1;
+
+        for (int j = maxJ; j >= minJ; j--)
+        {
+            tmpArray[minI, j] = count;
+            count++;
+        }
+        minI++;
+        
     }
-    return result;
 }
+
 
 void Main()
 {
-    int minV = 0;
-    int maxV = 10;
-    int[,] myArray = FillArrayRandom(ReadInt("Введите число строк:"), ReadInt("Введите число столбцов:"), minV, maxV);
+    int[,] myArray = new int[4, 4];
     PrintArray(myArray);
     Console.WriteLine();
 
-    int[] arrDict = CreateDictionary1(myArray, minV, maxV);
-    PrintDictionary1(arrDict);
+    Spiral(myArray);
+    PrintArray(myArray);
+    Console.WriteLine();
 }
 
 Main();
